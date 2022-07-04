@@ -3,6 +3,7 @@ import mysql from 'mysql';
 
 //Create Express App
 const app =  express(); 
+
 //Make connection with planetscale DB
 const connectionString = process.env.DATABASE_URL || '';
 const connection = mysql.createConnection(connectionString);
@@ -24,13 +25,13 @@ app.get('/api/characters', (req: Request, res:Response) => {
 })
 
 app.get('/api/characters/:id', (req: Request, res:Response) => {
-    const {id} = req.params
-    const query = `SELECT * FROM Characters WHERE ID = ${id} LIMIT 1`;
+    const {id} = req.params // deconstruct id form params
+    const query = `SELECT * FROM Characters WHERE ID = ${id} LIMIT 1`;  //Build the query to select by id
     connection.query(query, (err, rows) => {
         if(err) throw err;
         const retVal = {
             data: rows.length > 0 ? rows[0] : null,
-            message: rows.length === 0 ? 'No Record Found' : null,
+            message: rows.length === 0 ? 'No Record Found' : null, //Create a message in case we dont get a response
         }
         return res.send(retVal);
     })
@@ -38,7 +39,7 @@ app.get('/api/characters/:id', (req: Request, res:Response) => {
 })
 
 
-//Start listening to port 3000
+//Start listening to port 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log("App is running")
