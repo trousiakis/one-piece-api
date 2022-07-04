@@ -7,6 +7,9 @@ const connectionString = process.env.DATABASE_URL || '';
 const connection = mysql.createConnection(connectionString);
 connection.connect();
 
+
+// axios request to get the page HTML
+// then load it to cheerio to scrap the names of the characters
 const getCharacterPageNames = async() => {
     const url = 'https://onepiece.fandom.com/wiki/List_of_Canon_Characters'
     const {data} = await axios.get(url);
@@ -21,10 +24,10 @@ const getCharacterPageNames = async() => {
         characterPageNames.push(name);
     }
     characterPageNames.splice(0,2);
-    // characterPageNames.splice(10,-1);
     return characterPageNames
 }
 
+// using the names we make request to each character page to get more info 
 const getCharacterInfo = async (characterName : String, idx: Number) => {
     const baseUrl = 'https://onepiece.fandom.com/wiki/';
     const { data } = await axios.get(`${baseUrl}${characterName}`);
@@ -47,9 +50,11 @@ const getCharacterInfo = async (characterName : String, idx: Number) => {
 
 }
 
+
+//Load data to the DB
 const loadCharacters = async () => {
     const characterPageNames = await getCharacterPageNames();
-    // Resolve a promise at a time
+    // Resolve one promise each time
 
     // const characterInfoArr = [];
     // for(let i=0; i < characterPageNames.length; i++){
